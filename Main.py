@@ -1,361 +1,109 @@
-import pygame
-import random
+''' We will make the board using dictionary 
+    in which keys will be the location(i.e : top-left,mid-right,etc.)
+    and initialliy it's values will be empty space and then after every move 
+    we will change the value according to player's choice of move. '''
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 576
+theBoard = {'7': ' ' , '8': ' ' , '9': ' ' ,
+            '4': ' ' , '5': ' ' , '6': ' ' ,
+            '1': ' ' , '2': ' ' , '3': ' ' }
 
-# Define some colors
-BLACK = (0,0,0)
-WHITE = (255,255,255)
-BLUE = (0,0,255)
-GREEN = (0,255,0)
-RED = (255,0,0)
+board_keys = []
 
-class Block(pygame.sprite.Sprite):
-    def __init__(self,x,y,color,width,height):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-        # Set the background color and set it to be transparent
-        self.image = pygame.Surface(&#91;width,height])
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
+for key in theBoard:
+    board_keys.append(key)
+
+''' We will have to print the updated board after every move in the game and 
+    thus we will make a function in which we'll define the printBoard function
+    so that we can easily print the board everytime by calling this function. '''
+
+def printBoard(board):
+    print(board['7'] + '|' + board['8'] + '|' + board['9'])
+    print('-+-+-')
+    print(board['4'] + '|' + board['5'] + '|' + board['6'])
+    print('-+-+-')
+    print(board['1'] + '|' + board['2'] + '|' + board['3'])
+
+# Now we'll write the main function which has all the gameplay functionality.
+def game():
+
+    turn = 'X'
+    count = 0
 
 
-class Ellipse(pygame.sprite.Sprite):
-    def __init__(self,x,y,color,width,height):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-        # Set the background color and set it to be transparent
-        self.image = pygame.Surface(&#91;width,height])
-        self.image.fill(BLACK)
-        self.image.set_colorkey(BLACK)
-        # Draw the ellipse
-        pygame.draw.ellipse(self.image,color,&#91;0,0,width,height])
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
+    for i in range(10):
+        printBoard(theBoard)
+        print("It's your turn," + turn + ".Move to which place?")
 
-        
-class Slime(pygame.sprite.Sprite):
-    def __init__(self,x,y,change_x,change_y):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-        # Set the direction of the slime
-        self.change_x = change_x
-        self.change_y = change_y
-        # Load image
-        self.image = pygame.image.load("slime.png").convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
- 
+        move = input()        
 
-    def update(self,horizontal_blocks,vertical_blocks):
-        self.rect.x += self.change_x
-        self.rect.y += self.change_y
-        if self.rect.right &lt; 0:
-            self.rect.left = SCREEN_WIDTH
-        elif self.rect.left &gt; SCREEN_WIDTH:
-            self.rect.right = 0
-        if self.rect.bottom &lt; 0:
-            self.rect.top = SCREEN_HEIGHT
-        elif self.rect.top &gt; SCREEN_HEIGHT:
-            self.rect.bottom = 0
+        if theBoard[move] == ' ':
+            theBoard[move] = turn
+            count += 1
+        else:
+            print("That place is already filled.\nMove to which place?")
+            continue
 
-        if self.rect.topleft in self.get_intersection_position():
-            direction = random.choice(("left","right","up","down"))
-            if direction == "left" and self.change_x == 0:
-                self.change_x = -2
-                self.change_y = 0
-            elif direction == "right" and self.change_x == 0:
-                self.change_x = 2
-                self.change_y = 0
-            elif direction == "up" and self.change_y == 0:
-                self.change_x = 0
-                self.change_y = -2
-            elif direction == "down" and self.change_y == 0:
-                self.change_x = 0
-                self.change_y = 2
-                
+        # Now we will check if player X or O has won,for every move after 5 moves. 
+        if count >= 5:
+            if theBoard['7'] == theBoard['8'] == theBoard['9'] != ' ': # across the top
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")                
+                break
+            elif theBoard['4'] == theBoard['5'] == theBoard['6'] != ' ': # across the middle
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break
+            elif theBoard['1'] == theBoard['2'] == theBoard['3'] != ' ': # across the bottom
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break
+            elif theBoard['1'] == theBoard['4'] == theBoard['7'] != ' ': # down the left side
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break
+            elif theBoard['2'] == theBoard['5'] == theBoard['8'] != ' ': # down the middle
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break
+            elif theBoard['3'] == theBoard['6'] == theBoard['9'] != ' ': # down the right side
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break 
+            elif theBoard['7'] == theBoard['5'] == theBoard['3'] != ' ': # diagonal
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break
+            elif theBoard['1'] == theBoard['5'] == theBoard['9'] != ' ': # diagonal
+                printBoard(theBoard)
+                print("\nGame Over.\n")                
+                print(" **** " +turn + " won. ****")
+                break 
 
-    def get_intersection_position(self):
-        items = &#91;]
-        for i,row in enumerate(enviroment()):
-            for j,item in enumerate(row):
-                if item == 3:
-                    items.append((j*32,i*32))
+        # If neither X nor O wins and the board is full, we'll declare the result as 'tie'.
+        if count == 9:
+            print("\nGame Over.\n")                
+            print("It's a Tie!!")
 
-        return items
+        # Now we have to change the player after every move.
+        if turn =='X':
+            turn = 'O'
+        else:
+            turn = 'X'        
     
-        
-def enviroment():
-    grid = ((0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0))
+    # Now we will ask if player wants to restart the game or not.
+    restart = input("Do want to play Again?(y/n)")
+    if restart == "y" or restart == "Y":  
+        for key in board_keys:
+            theBoard[key] = " "
 
-    return grid
+        game()
 
-def draw_enviroment(screen):
-    for i,row in enumerate(enviroment()):
-        for j,item in enumerate(row):
-            if item == 1:
-                pygame.draw.line(screen, BLUE , &#91;j*32, i*32], &#91;j*32+32,i*32], 3)
-                pygame.draw.line(screen, BLUE , &#91;j*32, i*32+32], &#91;j*32+32,i*32+32], 3)
-            elif item == 2:
-                pygame.draw.line(screen, BLUE , &#91;j*32, i*32], &#91;j*32,i*32+32], 3)
-                pygame.draw.line(screen, BLUE , &#91;j*32+32, i*32], &#91;j*32+32,i*32+32], 3)
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-import pygame
-import random
- 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 576
- 
-# Define some colors
-BLACK = (0,0,0)
-WHITE = (255,255,255)
-BLUE = (0,0,255)
-GREEN = (0,255,0)
-RED = (255,0,0)
- 
-class Block(pygame.sprite.Sprite):
-    def __init__(self,x,y,color,width,height):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-        # Set the background color and set it to be transparent
-        self.image = pygame.Surface(&#91;width,height])
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
- 
- 
-class Ellipse(pygame.sprite.Sprite):
-    def __init__(self,x,y,color,width,height):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-        # Set the background color and set it to be transparent
-        self.image = pygame.Surface(&#91;width,height])
-        self.image.fill(BLACK)
-        self.image.set_colorkey(BLACK)
-        # Draw the ellipse
-        pygame.draw.ellipse(self.image,color,&#91;0,0,width,height])
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
- 
-        
-class Slime(pygame.sprite.Sprite):
-    def __init__(self,x,y,change_x,change_y):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-        # Set the direction of the slime
-        self.change_x = change_x
-        self.change_y = change_y
-        # Load image
-        self.image = pygame.image.load("slime.png").convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
- 
-    def update(self,horizontal_blocks,vertical_blocks):
-        self.rect.x += self.change_x
-        self.rect.y += self.change_y
-        if self.rect.right &lt; 0:
-            self.rect.left = SCREEN_WIDTH
-        elif self.rect.left &gt; SCREEN_WIDTH:
-            self.rect.right = 0
-        if self.rect.bottom &lt; 0:
-            self.rect.top = SCREEN_HEIGHT
-        elif self.rect.top &gt; SCREEN_HEIGHT:
-            self.rect.bottom = 0
- 
-        if self.rect.topleft in self.get_intersection_position():
-            direction = random.choice(("left","right","up","down"))
-            if direction == "left" and self.change_x == 0:
-                self.change_x = -2
-                self.change_y = 0
-            elif direction == "right" and self.change_x == 0:
-                self.change_x = 2
-                self.change_y = 0
-            elif direction == "up" and self.change_y == 0:
-                self.change_x = 0
-                self.change_y = -2
-            elif direction == "down" and self.change_y == 0:
-                self.change_x = 0
-                self.change_y = 2
-                
- 
-    def get_intersection_position(self):
-        items = &#91;]
-        for i,row in enumerate(enviroment()):
-            for j,item in enumerate(row):
-                if item == 3:
-                    items.append((j*32,i*32))
- 
-        return items
-    
-        
-def enviroment():
-    grid = ((0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0),
-            (0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0))
- 
-    return grid
- 
-def draw_enviroment(screen):
-    for i,row in enumerate(enviroment()):
-        for j,item in enumerate(row):
-            if item == 1:
-                pygame.draw.line(screen, BLUE , &#91;j*32, i*32], &#91;j*32+32,i*32], 3)
-                pygame.draw.line(screen, BLUE , &#91;j*32, i*32+32], &#91;j*32+32,i*32+32], 3)
-            elif item == 2:
-                pygame.draw.line(screen, BLUE , &#91;j*32, i*32], &#91;j*32,i*32+32], 3)
-                pygame.draw.line(screen, BLUE , &#91;j*32+32, i*32], &#91;j*32+32,i*32+32], 3)
+if __name__ == "__main__":
+    game()
