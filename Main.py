@@ -1,2 +1,7 @@
+txt = "PacMan"
 
-WOW WOW WOWW
+x = txt.center(20)
+
+print(x)
+
+      
