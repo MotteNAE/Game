@@ -1,7 +1,5 @@
-txt = "PacMan"
+title = "PacMan"
 
-x = txt.center(20)
+pacman = title.center(100)
 
-print(x)
-
-      
+print(pacman)
